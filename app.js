@@ -3,25 +3,30 @@ const express = require("express");
 const app = express();
 const PORT = 5000;
 
-// middleware
+// built-in middleware
 app.use(express.json());
-app.use((req, res) => {
+
+// custom middleware
+app.use((req, res, next) => {
   console.log("Hey I am middleware");
-  res.send("Hey I am middleware");
+ return next();
 });
 
-
-// test route
-app.get("/", (req, res) => {
-  res.send("Express server is running 🚀");
-});
-
-app.get("/random",(res,req)=>{
-    res.send("Hi i am root ")
+app.use((req, res, next )=>{
+    console.log("Hey i am  2nd middleware");
+   return next();
 })
 
+// routes
+app.get("/", (req, res) => {
+  res.send(" Hey i am Root🚀");
+});
 
-// start server
+app.get("/random", (req, res) => {
+  res.send("this is a random page");
+});
+
+// server start
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
