@@ -6,16 +6,33 @@ const PORT = 5000;
 // built-in middleware
 app.use(express.json());
 
-// custom middleware
+// // custom middleware
+// app.use((req, res, next) => {
+//   console.log("Hey I am middleware");
+//  return next();
+// });
+
+// app.use((req, res, next )=>{
+//     console.log("Hey i am  2nd middleware");
+//    return next();
+// })
+
+
+
+// Human-readable time (BEST)
 app.use((req, res, next) => {
-  console.log("Hey I am middleware");
- return next();
+  req.time = new Date().toLocaleString();
+
+  console.log(
+    req.method,
+    req.hostname,
+    req.path,
+    req.time
+  );
+
+  next();
 });
 
-app.use((req, res, next )=>{
-    console.log("Hey i am  2nd middleware");
-   return next();
-})
 
 // routes
 app.get("/", (req, res) => {
