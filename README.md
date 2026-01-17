@@ -1,118 +1,226 @@
 # express_middleware
 
+This repository demonstrates **Express.js middleware concepts** with clear examples, interview notes, and commonly used middleware libraries.
 
-app.use(()=>{
-    console.log("middleware 1");
-})
+---
+Built-in middleware
 
-using req&res object in middleware 
+Custom middleware (commented)
 
+Logger middleware
 
-app.use((req,res)=>{
-    console.log("Hy i am a middleware"
-    )
-    res.send("BYE)
-})
+API token authentication
 
-If you need moreinformation so  check the express documentation useing middleware  https://expressjs.com/en/guide/using-middleware.html
+Multiple middleware chaining
 
-also visit the blog.bitsrc.io 5 express middleware libraries Every Devloper should Know about middleware
+Route-level middleware
 
-5 Express Middleware Libraries Every Developer Should Know
-Recommended Express middleware libraries
+Proper routing setup
 
-Helmet — Increase HTTP Header Security
-Helmet helps you secure your Express apps by setting various HTTP headers.
-2. Cookie-parser — Parse Cookies
-Cookie-parser is a middleware that transfers cookies with client requests.
+---
 
+## 📌 What is Express.js?
 
-3. Passport — Access to Wide Range of Authentication Mechanisms
-Passport is a simple unrobustive authentication middleware for Node.js.\
+Express.js is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
 
+---
+## 📌 What is Middleware?
 
+Middleware is a function that has access to:
 
+* `req` (request)
+* `res` (response)
+* `next` (to move to the next middleware)
 
-4. Morgan— Log HTTP Requests and Errors
-Morgan is an HTTP request logger middleware for Node.js typically used for Express apps.
+It executes **between the request and the response**.
 
+---
 
-5. CORS — Allow or Restrict Requested Resources on a Web Server
-CORS is a node.js package that provides a Connect/Express middleware for enabling CORS with a variety of options.
+## 🔹 Basic Middleware Example
 
+```js
+app.use(() => {
+  console.log("middleware 1");
+});
+```
 
+---
 
+## 🔹 Using `req` & `res` Object in Middleware
 
-Conclusion
-In this article, I discussed five different Express middleware libraries. Each of them has its advantages and drawbacks. It is up to you to choose the best library as per your project requirements.
+```js
+app.use((req, res) => {
+  console.log("Hi, I am a middleware");
+  res.send("BYE");
+});
+```
 
-So, I hope my recommendations will help you make a wise decision in selecting Express middleware libraries for your next project. And don't forget to share your experience in the comment section if you have already used them.
+📌 Once `res.send()` is called, the request–response cycle ends.
 
+---
 
+## 📖 Official Documentation
 
+If you need more information, check the Express documentation:
+👉 [https://expressjs.com/en/guide/using-middleware.html](https://expressjs.com/en/guide/using-middleware.html)
 
+Also visit: **blog.bitsrc.io**
+👉 *5 Express Middleware Libraries Every Developer Should Know*
 
+---
 
+## ⭐ 5 Express Middleware Libraries Every Developer Should Know
 
+### 1️⃣ Helmet — Increase HTTP Header Security
 
+Helmet helps secure Express applications by setting various HTTP headers.
 
+---
 
+### 2️⃣ Cookie-parser — Parse Cookies
 
+Cookie-parser is a middleware that parses cookies attached to client requests.
 
+---
+
+### 3️⃣ Passport — Authentication Middleware
+
+Passport is a simple and flexible authentication middleware for Node.js that supports multiple strategies.
+
+-
+
+### 4️⃣ Morgan — Log HTTP Requests and Errors
+
+Morgan is an HTTP request logger middleware commonly used in Express applications.
+
+---
+
+### 5️⃣ CORS — Control Cross-Origin Requests
+
+CORS allows or restricts requested resources on a web server from different origins.
+
+---
+
+## 🔚 Conclusion
+
+Each middleware library has its own advantages and drawbacks.
+The choice of middleware depends on **project requirements**, **security needs**, and **application scale**.
+
+---
+
+## 🧪 Example: Express App with Middleware
+
+```js
 const express = require("express");
 
 const app = express();
 const PORT = 5000;
 
-// middleware
+// Built-in middleware
 app.use(express.json());
 
 app.use((req, res) => {
-    
-    let  {query}=req.query;
-    console.log(query);
+  let { query } = req.query;
+  console.log(query);
 
   console.log("Hey I am middleware");
-  res.send("Middle finished");
+  res.send("Middleware finished");
 });
 
-
-// test route
+// Routes
 app.get("/", (req, res) => {
   res.send("Express server is running 🚀");
 });
 
-app.get("/random",(res,req)=>{
-    res.send("Hi i am root ")
-})
+app.get("/random", (req, res) => {
+  res.send("Hi I am random");
+});
 
-
-// start server
+// Server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+```
 
+---
 
+## 🛠 Creating Utility Middleware (Logger)
 
+```js
+app.use((req, res, next) => {
+  req.responseTime = new Date(Date.now()).toLocaleString();
+  console.log(req.method, req.path, req.responseTime, req.hostname);
+  next();
+});
+```
 
+---
 
-Creating Utility Middleware Logger 
+## 🔐 API Token as Query String
 
-app.use ((res, req , next)=>{
-    req.responseTime = new Date(Date.now ()).toLocaleString();
-    console.log(req.method , req.path , req.responseTime , req.hostname);
-    next();
-    
+Create middleware to check if an access token is passed in the query string.
+
+---
+
+## 🔁 Example 1: Global Multiple Middlewares
+
+```js
+app.use((req, res, next) => {
+  console.log("Middleware 1");
+  next();
 });
 
+app.use((req, res, next) => {
+  console.log("Middleware 2");
+  next();
+});
 
+app.get("/", (req, res) => {
+  res.send("Hello");
+});
+```
 
+---
 
+## 🔁 Example 2: Route-Level Multiple Middlewares
 
+```js
+const checkToken = (req, res, next) => {
+  if (req.query.token === "giveaccess") {
+    next();
+  } else {
+    res.status(403).send("Access Denied");
+  }
+};
 
+const logRoute = (req, res, next) => {
+  console.log("API route hit");
+  next();
+};
 
+app.get("/api", checkToken, logRoute, (req, res) => {
+  res.send("Secure Data");
+});
+```
 
+---
 
+## 🧠 Key Rules (Interview Gold)
 
-API Token as Query String 
-Lets create a middleware for an api that checks if the access token was passed in the query string. or not 
+* Middlewares execute **top to bottom**
+* `next()` → moves to next middleware
+* `res.send()` → ends the request
+* **Order matters** 🔥
+
+---
+
+## 🎯 Interview One-Liner
+
+> **Multiple middleware means chaining more than one middleware function to handle a single request in a sequential manner.**
+> **Middleware functions can be used to perform various tasks such as logging, authentication, and data validation.**
+
+---
+
+## 📚 References
+
+* [https://expressjs.com/en/guide/using-middleware.html](https://expressjs.com/en/guide/using-middleware.html)
