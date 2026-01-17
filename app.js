@@ -34,6 +34,18 @@ app.use((req, res, next) => {
 });
 
 
+//Custom middleware of 404 error Error Handling Middleware 
+app.use ((req, res )=>{
+    res.status(404).send("Page not found");
+})
+
+// route-level middleware for /random
+app.use("/random", (req, res, next) => {
+  console.log("Random route middleware");
+  next();
+});
+
+
 // routes
 app.get("/", (req, res) => {
   res.send(" Hey i am Root🚀");
@@ -42,6 +54,12 @@ app.get("/", (req, res) => {
 app.get("/random", (req, res) => {
   res.send("this is a random page");
 });
+
+
+app.get("/login", (req, res) => {
+  res.send("this is a login page");
+});
+
 
 // server start
 app.listen(PORT, () => {
