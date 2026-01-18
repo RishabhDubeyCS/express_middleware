@@ -1,5 +1,5 @@
 const express = require("express");
-
+const ExpressError = require("./ExpressError");
 const app = express();
 const PORT = 5000;
 
@@ -47,39 +47,39 @@ app.use(express.json());
 /* =====================================
    API Token Middleware (Commented)
 ===================================== */
-// app.use("/api", (req, res, next) => {
-//   let { token } = req.query;
+app.use("/api", (req, res, next) => {
+  let { token } = req.query;
 
-//   if (token === "giveaccess") {
-//     return next();
-//   }
+  if (token === "giveaccess") {
+    return next();
+  }
 
-//   res.status(403).send("Access Denied");
-// });
+throw new ExpressError("Access Denied", 403);
+});
 
-// app.get("/api", (req, res) => {
-//   res.send("data");
-// });
+app.get("/api", (req, res) => {
+  res.send("data");
+});
 
 /* =====================================
    Multiple Middlewares
 ===================================== */
-const checkToken = (req, res, next) => {
-  if (req.query.token === "giveaccess") {
-    next();
-  } else {
-    res.status(403).send("Access Denied");
-  }
-};
+// const checkToken = (req, res, next) => {
+//   if (req.query.token === "giveaccess") {
+//     next();
+//   } else {
+//     res.status(403).send("Access Denied");
+//   }
+// };
 
-const logRoute = (req, res, next) => {
-  console.log("API route hit");
-  next();
-};
+// const logRoute = (req, res, next) => {
+//   console.log("API route hit");
+//   next();
+// };
 
-app.get("/api", checkToken, logRoute, (req, res) => {
-  res.send("Secure Data");
-});
+// app.get("/api", checkToken, logRoute, (req, res) => {
+//   res.send("Secure Data");
+// });
 
 /*
  Test URLs:
@@ -87,6 +87,25 @@ app.get("/api", checkToken, logRoute, (req, res) => {
  ✖ http://localhost:5000/api
 */
 
+
+app.use("/api", (req, res, next) => {
+  let { token } = req.query;
+
+  if (token === "giveaccess") {
+    return next();
+  }
+
+  throw new ExpressError("Access Denied", 403);
+});
+
+app.get("/api", (req, res) => {
+  res.send("data");
+});
+
+app.use((err, req, res, next) => {
+  let { statusCode = 500, message = "Something went wrong" } = err;
+  res.status(statusCode).send(message);
+});
 /* =====================================
    Route-Level Middleware
 ===================================== */
