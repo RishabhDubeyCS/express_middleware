@@ -129,7 +129,7 @@ app.use((req, res) => {
 
 // Routes
 app.get("/", (req, res) => {
-  res.send("Express server is running 🚀");
+  res.send("Express server is running ");
 });
 
 app.get("/random", (req, res) => {

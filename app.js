@@ -95,20 +95,29 @@ app.use("/random", (req, res, next) => {
   next();
 });
 
+
+
 /* =====================================
    Routes
 ===================================== */
 app.get("/", (req, res) => {
-  res.send(" Hey i am Root🚀");
+  res.send(" Hey i am Root");
 });
 
 app.get("/random", (req, res) => {
   res.send("this is a random page");
 });
 
-app.get("/login", (req, res) => {
-  res.send("this is a login page");
-});
+
+
+app.get('/err', (req, res)=>{
+abcd = abcd
+})
+app.use((err, req, res , next )=>{
+  console.log("---------Error--------!")
+  next(err);
+})
+
 
 /* =====================================
    Server Start
